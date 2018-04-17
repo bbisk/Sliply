@@ -122,7 +122,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CELERY_BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_ACCEPT_CONTENT = ['application/json']

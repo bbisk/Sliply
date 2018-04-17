@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from sliply.views import FileUploadView
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^', FileUploadView.as_view(), name='upload'),
 ]
