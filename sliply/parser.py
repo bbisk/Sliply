@@ -103,11 +103,13 @@ def get_item(receipt):
 
     for item in item_match:
         item_elements = []
+        item_name = re.match(r'(.*^)[^xX,\n]*', item[0].strip())
+        item_elements.append(item_name.group(0))
         for index, element in enumerate(item):
             if element not in ['', '\n', ' ']:
                 if re.match(r'(,[\d]*)', element):
                     amount_conversion = element.replace(',', '')
-                    item_elements[1] = '.'.join([item[index - 1], amount_conversion])
+                    item_elements[2] = '.'.join([item[index - 1], amount_conversion])
                 else:
                     item_elements.append(element)
 
