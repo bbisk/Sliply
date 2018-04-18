@@ -1,0 +1,115 @@
+import re
+from datetime import datetime as dt
+from difflib import get_close_matches
+
+
+def get_receipt_wordlist(receipt):
+    return receipt.replace('\n', ' ').split(" ")
+
+#store name
+def get_seller_name(receipt):
+    receipt_space = receipt.split("\n")
+    if receipt_space[0] == '':
+        return receipt_space[1]
+    else:
+        return receipt_space[0]
+
+#date
+def get_receipt_date(receipt):
+    date_regex = re.search(r'\d{4}\-(0?[1-9]|1[012])\-(0?[0-9]|[12][0-9]|3[01])*', receipt)
+    date_regex_string = re.search(r'dn.[0-3][0-9]r[0-1][1-9].[0-9]{2}', receipt)
+    if date_regex:
+        return dt.strptime(date_regex.group(0), '%Y-%m-%d')
+    elif date_regex_string:
+        return dt.strptime(date_regex_string.group(0), 'dn.%dr%m.%y')
+    else:
+        return None
+
+
+def total_amount_check(total):
+    return re.match(r'^[0-9]{1,4}(,)[0-9]{2,}', total)
+
+def normalize_amount(amount):
+    return float(amount.replace(',','.'))
+
+def get_total_amount(receipt):
+    receipt_wordlist = get_receipt_wordlist(receipt)
+    receipt_total_currency_placers = ["pln", "zl", "zł"]
+    receipt_total_word_placers = ["suma", "suma:", "razem"]
+
+    for index, word in enumerate(receipt_wordlist):
+        word_normalized = word.lower()
+        if word_normalized in receipt_total_currency_placers:
+            possible_total_amount = receipt_wordlist[index + 1]
+            if total_amount_check(possible_total_amount):
+                return normalize_amount(possible_total_amount)
+            else:
+                return "error"
+        else:
+            possible_total_amount = receipt_wordlist[index + 2]
+            if word_normalized in receipt_total_word_placers and receipt_wordlist[index + 1].lower() != "ptu":
+                if total_amount_check(possible_total_amount):
+                    return normalize_amount(possible_total_amount)
+                else:
+                    for n in range(index + 1, index + 6):
+                        if total_amount_check(receipt_wordlist[n]):
+                            return normalize_amount(receipt_wordlist[n])
+
+
+def get_payment_method(receipt):
+    card_payment = re.search(r'([kK][aA][rR][tT]([aA]|[\w]))', receipt)
+    cash_payment = re.match(r'([gG][oO][tT]([oO]|[\w])[wW][kK]([aA]|[\w]))', receipt)
+    if card_payment:
+        return 1
+    elif cash_payment:
+        return 0
+    else:
+        return 2
+
+def get_item_content(receipt):
+    wordlist = get_receipt_wordlist(receipt)
+    start_cut_receipt = receipt
+    start_cut_receipt_content = []
+    final_receipt_content = []
+
+    for index, word in enumerate(wordlist):
+        item_start_patterns = ['fiskalny']
+        item_end_patterns = ['sprzed', 'kw.op']
+        get_start_receipt_match = get_close_matches(word.lower(), item_start_patterns)
+        get_end_receipt_match = get_close_matches(word.lower(), item_end_patterns)
+
+        if get_start_receipt_match:
+            start_cut_receipt = receipt.split(word)[1]
+            start_cut_receipt_content.append(start_cut_receipt)
+
+        if get_end_receipt_match:
+            end_cut_receipt = start_cut_receipt.split(word)[0]
+            final_receipt_content.append(end_cut_receipt)
+
+    if final_receipt_content:
+        return final_receipt_content[0]
+
+    elif start_cut_receipt_content:
+        return start_cut_receipt_content[0]
+
+    else:
+        return None
+
+
+def get_item(receipt):
+    item_content = get_item_content(receipt)
+    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/])*([\d,\d]*|[xX])[\s][xX]([\s]|([,]*))([\d,]*))', item_content)
+    items = []
+
+    for item in item_match:
+        item_elements = []
+        for index, element in enumerate(item):
+            if element not in ['', '\n', ' ']:
+                if re.match(r'(,[\d]*)', element):
+                    amount_conversion = element.replace(',', '')
+                    item_elements[1] = '.'.join([item[index - 1], amount_conversion])
+                else:
+                    item_elements.append(element)
+
+        items.append(item_elements)
+    return items
