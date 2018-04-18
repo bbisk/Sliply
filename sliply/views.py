@@ -19,7 +19,8 @@ class FileUploadView(LoginRequiredMixin, CreateView):
         files = self.request.FILES.getlist('scanfile')
         for n in range(0, len(files)):
             filename = files[n]
-            save_to_db = Slip.objects.create(scanfile=filename)
+            owner = self.request.user
+            save_to_db = Slip.objects.create(owner=owner, scanfile=filename)
             detect_text.delay(filename.name, save_to_db.pk)
 
             # form_to_save = form.save(commit=False)

@@ -96,9 +96,9 @@ def get_item_content(receipt):
         return None
 
 
-def get_item(receipt):
+def get_items(receipt):
     item_content = get_item_content(receipt)
-    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/])*([\d,\d]*|[xX])[\s][xX]([\s]|([,]*))([\d,]*))', item_content)
+    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/]|[0-9]{1},[0-9]{1}[A-Z])*([\d,\d]*|[xX])[\s]*[xX]([\s]|([,]*))([\d,.]*))', item_content)
     items = []
 
     for item in item_match:
@@ -110,6 +110,9 @@ def get_item(receipt):
                 if re.match(r'(,[\d]*)', element):
                     amount_conversion = element.replace(',', '')
                     item_elements[2] = '.'.join([item[index - 1], amount_conversion])
+                elif re.match(r'([0-9]{1,},[0-9]{1,})', element):
+                    price_conversion = element.replace(',', '.')
+                    item_elements.append(price_conversion)
                 else:
                     item_elements.append(element)
 

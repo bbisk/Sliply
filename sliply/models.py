@@ -19,3 +19,22 @@ class Slip(models.Model):
     payment_type = models.SmallIntegerField(choices=PAYMENT_TYPES, null=True)
     # address = models.ForeignKey('Address', null=True, blank=True)
     # group = models.ManyToManyField('Group', blank=True)
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Item(models.Model):
+    owner = models.ForeignKey(User, null=True, blank=True)
+    slip = models.ForeignKey(Slip)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+    raw_text = models.TextField(null=True, blank=True)
+    item_name = models.CharField(max_length=128, null=True, blank=True)
+    quantity = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    # category
+
+    def __str__(self):
+        return self.item_name
