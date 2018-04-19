@@ -31,6 +31,7 @@
 
 
                     {% for obj in object_list %}
+                        {% if obj.purchase_date != None %}
                         <tr>
                             <td><a href='{{ obj.get_absolute_url }}'>{{ obj.purchase_date }}</a></td>
                             <td>{{ obj.seller_name}}</td>
@@ -41,8 +42,25 @@
                                 <a href="{% url 'slip_delete' obj.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
                             </td>
                         </tr>
-                    {% endfor %}
+                        {% else %}
 
+                        <tr>
+                            <td>Text recognition in progress...</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                       <tr>
+                            <td></td>
+                            <td></td>
+                            <td><strong>{{ total_amount_sum }}</strong><br>spent in total</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                 </table>
             </div>
 

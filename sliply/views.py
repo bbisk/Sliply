@@ -2,22 +2,22 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models.aggregates import Sum
 from django.db.models.query_utils import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls.base import reverse_lazy
-from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from sliply.forms import SlipCreateForm, ItemCreateForm
-from sliply.models import Slip, Item
-from sliply.tasks import parse_text
-from .forms import UploadForm
-from django.core.files.storage import FileSystemStorage
+from .models import Slip, Item
+from .tasks import parse_text
+from .forms import UploadForm, SlipCreateForm, ItemCreateForm
 
 from .tasks import detect_text
 
+
+#Slip views
 
 class FileUploadView(LoginRequiredMixin, CreateView):
     form_class = UploadForm
@@ -31,22 +31,21 @@ class FileUploadView(LoginRequiredMixin, CreateView):
             save_to_db = Slip.objects.create(owner=owner, scanfile=filename)
             detect_text.delay(filename.name, save_to_db.pk)
 
-            # form_to_save = form.save(commit=False)
-            # form_to_save.scanfile = files[n]
-            # form.save()
-        # filename = form_to_save.scanfile.name
-        # pk = form_to_save.id
-        # myfile = self.request.FILES['file']
-        # fs = FileSystemStorage()
-        # filename = fs.save(myfile.name, myfile)
-        # detect_text.delay(filename, pk)
-        messages.add_message(self.request, messages.INFO, "OK")
+        # messages.add_message(self.request, messages.INFO, "OK")
         return redirect('slips')
 
 class SlipListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
-        queryset = Slip.objects.filter(owner=self.request.user).order_by('create_date')
+        queryset = Slip.objects.filter(owner=self.request.user).order_by('-create_date')
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        total_amount = queryset.aggregate(Sum('total_amount'))
+        context['total_amount_sum'] = total_amount['total_amount__sum']
+        return context
+
 
 
 class SlipDetailView(LoginRequiredMixin, DetailView):
@@ -55,19 +54,13 @@ class SlipDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         if self.request.GET.get('action') == 'rescan':
             parse_text.delay(self.object.raw_text, self.object.pk)
+            messages.add_message(self.request, messages.INFO, "Processing text detection...")
         context = super().get_context_data(**kwargs)
         return context
 
-
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['path'] = MEDIA_URL
-    #     return context
-
 class SlipUpdateView(LoginRequiredMixin, UpdateView):
     model = Slip
-    fields = ('purchase_date', 'seller_name', 'total_amount', 'raw_text')
+    fields = ('purchase_date', 'seller_name', 'total_amount', 'payment_type', 'raw_text')
 
 
 class SlipDeleteView(LoginRequiredMixin, DeleteView):
@@ -82,8 +75,8 @@ class SearchView(SlipListView):
         fromdate = self.request.GET.get('from', default="")
         todate = self.request.GET.get('to', default="")
 
-        queryset = Slip.objects.filter(owner=self.request.user).order_by('create_date').filter(seller_name__icontains=query) or \
-                   Slip.objects.filter(owner=self.request.user).order_by('create_date').filter(item__item_name__icontains=query)
+        queryset = Slip.objects.filter(owner=self.request.user).order_by('-create_date').filter(seller_name__icontains=query) or \
+                   Slip.objects.filter(owner=self.request.user).order_by('-create_date').filter(item__item_name__icontains=query)
         if fromto == "from" and fromdate != "" and todate!="":
             queryset = queryset.filter(Q(purchase_date__gte=fromdate)& Q(purchase_date__lte=todate))
 
@@ -107,6 +100,7 @@ class SlipCreateView(LoginRequiredMixin, CreateView):
 
 
 #Item views
+
 class ItemListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         query = self.request.GET.get('query', default="")
@@ -114,8 +108,8 @@ class ItemListView(LoginRequiredMixin, ListView):
         fromdate = self.request.GET.get('from', default="")
         todate = self.request.GET.get('to', default="")
 
-        queryset = Item.objects.filter(owner=self.request.user).order_by('create_date').filter(slip__seller_name__icontains=query) or \
-                   Item.objects.filter(owner=self.request.user).order_by('create_date').filter(item__icontains=query)
+        queryset = Item.objects.filter(owner=self.request.user).order_by('-create_date').filter(slip__seller_name__icontains=query) or \
+                   Item.objects.filter(owner=self.request.user).order_by('-create_date').filter(item__icontains=query)
         if fromto == "from" and fromdate != "" and todate!="":
             queryset = queryset.filter(Q(slip__purchase_date__gte=fromdate)& Q(slip__purchase_date__lte=todate))
 
@@ -127,6 +121,12 @@ class ItemListView(LoginRequiredMixin, ListView):
 
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        total_amount = queryset.aggregate(Sum('price'))
+        context['total_amount_sum'] = total_amount['price__sum']
+        return context
 
 class ItemDetailView(LoginRequiredMixin, DetailView):
     model = Item
@@ -155,9 +155,11 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
         return redirect('items')
 
 #User views
-class UserProfileView(LoginRequiredMixin, DetailView):
-    model = User
 
+class UserProfileView(LoginRequiredMixin, DetailView):
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.request.user.id)
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User

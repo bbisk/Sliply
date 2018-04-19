@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^items/(?P<pk>(\d)+)/edit/$', ItemUpdateView.as_view(), name='item_edit'),
     url(r'^items/(?P<pk>(\d)+)/delete/$', ItemDeleteView.as_view(), name='item_delete'),
     url(r'^items/create/$', ItemCreateView.as_view(), name='item_create'),
-    url(r'^profile/(?P<pk>(\d)+)/$', UserProfileView.as_view(), name='profile_details'),
+    url(r'^profile/$', UserProfileView.as_view(), name='profile_details'),
     url(r'^profile/(?P<pk>(\d)+)/edit/$', UserUpdateView.as_view(), name='profile_edit'),
 
 ]
