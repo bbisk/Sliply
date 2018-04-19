@@ -1,5 +1,7 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'subbase.html' %}
+{% block cardheader %}
+{% endblock %}
+{% block form %}
 {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -10,6 +12,6 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 {{ form.as_p }}
-      <button type="submit">Upload</button>
+      <button type="submit">Save</button>
   </form>
 {% endblock %}
