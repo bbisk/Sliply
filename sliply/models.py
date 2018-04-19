@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls.base import reverse
 
 PAYMENT_TYPES = (
     (0, 'Cash'),
@@ -22,6 +23,9 @@ class Slip(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def get_absolute_url(self):
+        return reverse('slip_details', kwargs = {'pk': self.pk})
 
 
 class Item(models.Model):

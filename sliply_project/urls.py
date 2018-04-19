@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from sliply.views import FileUploadView
+from sliply.views import FileUploadView, SlipListView, SlipDetailView, SlipUpdateView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -24,5 +24,8 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
+    url(r'^slips/$', SlipListView.as_view(), name='slips'),
+    url(r'^slips/(?P<pk>(\d)+)/$', SlipDetailView.as_view(), name='slip_details'),
+    url(r'^slips/(?P<pk>(\d)+)/edit/$', SlipUpdateView.as_view(), name='slip_edit'),
 
 ]

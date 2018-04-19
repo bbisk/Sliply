@@ -58,7 +58,7 @@ ROOT_URLCONF = 'sliply_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,  'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +129,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
 CELERY_BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_ACCEPT_CONTENT = ['application/json']
@@ -148,3 +151,9 @@ LOGIN_REDIRECT_URL = 'upload'
 
 SOCIAL_AUTH_FACEBOOK_KEY = '291170378085259'
 SOCIAL_AUTH_FACEBOOK_SECRET = '6684d9b31dfd29942de5f16ede52aab1'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)

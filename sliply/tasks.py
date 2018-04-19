@@ -22,7 +22,11 @@ def detect_text(filename, pk):
     response = client.text_detection(image=image)
     texts = response.text_annotations
     slip_text = [text.description for text in texts][0]
+    parse_text(slip_text, pk)
+    return "Sent to parser"
 
+@shared_task
+def parse_text(slip_text, pk):
     slip_to_update = Slip.objects.get(pk=pk)
 
     if slip_text:
@@ -41,7 +45,7 @@ def detect_text(filename, pk):
     items_raw_only = get_item_content(slip_text)
     if items_to_save:
         for item in items_to_save:
-            if item:
+            if len(item) == 4:
                 Item.objects.create(
                     owner=slip_to_update.owner,
                     slip=slip_to_update,
@@ -49,6 +53,14 @@ def detect_text(filename, pk):
                     item_name=item[0],
                     quantity = float(item[2]),
                     price = float(item[3])
+                )
+            elif len(item) == 3:
+                Item.objects.create(
+                    owner=slip_to_update.owner,
+                    slip=slip_to_update,
+                    raw_text=item[1],
+                    item_name=item[0],
+                    price=float(item[2])
                 )
     else:
         if items_raw_only:
@@ -65,3 +77,4 @@ def detect_text(filename, pk):
     #add msg
 
     return slip_text
+
