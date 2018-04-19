@@ -1,0 +1,14 @@
+{% extends 'subbase.html' %}
+{% block cardheader %}
+                    <a href="{% url 'slip_edit' object.pk %}"><i class="fas fa-edit fa-lg"></i></a>
+{% endblock %}
+{% block form %}
+    <div class="col">
+ <div class="alert alert-warning">Are you sure you want to delete "{{ object }}"?
+<form action="" method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-warning btn-lg" value="Confirm">Confirm</button>
+    <input type="button" onclick="goBack()" class="btn btn-secondary btn-lg" value="Cancel">
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="d-flex pt-5 justify-content-center">
+        <form action="{% url 'items' %}" class="form-inline">
+            <input type="text" id="searchinput" name="query" class="form-control form-control-lg"
+                   placeholder="Search"
+                   value="{{ request.GET.query }}">
+            <select name="fromto" class="form-control form-control-lg" id="fromto">
+  <option value="from">From/To</option>
+  <option value="date">Exact date</option>
+</select>
+            <input id="dateinput" type="date" name="from" class="form-control form-control-lg" value="{{ request.GET.from }}">
+            <input id="dateinput" type="date" name="to" class="form-control form-control-lg" value="{{ request.GET.to }}">
+            <button type="submit" class="btn-lg btn-dark">Search</button>
+        </form>
+    </div>
+    <div class="d-flex pt-5 justify-content-center">
+        {% if object_list %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Purchase date</th>
+                        <th>Item</th>
+                        <th>From</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+                    {% for obj in object_list %}
+                        <tr>
+                            <td><a href='{{ obj.get_absolute_url }}'>{{ obj.slip.purchase_date }}</a></td>
+                            <td>{{ obj.item_name}}</td>
+                            <td>{{ obj.slip.seller_name }}</td>
+                            <td>{{ obj.quantity }}</td>
+                            <td>{{ obj.price }}</td>
+                            <td>
+                                <a href="{% url 'item_edit' obj.pk %}"><i class="fas fa-edit fa-lg"></i></a>
+                                <a href="{% url 'item_delete' obj.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+
+        {% else %}
+            <div class="alert alert-warning">
+                <strong>Sorry!</strong> There is no results matching your query. Try again.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

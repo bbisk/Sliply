@@ -1,0 +1,42 @@
+<div class="d-flex p-3 justify-content-center ">
+    <div id="circle" class="bg-secondary">
+        <a href="#" data-toggle="dropdown" style="color: white; text-decoration: none; letter-spacing: -0.3vw;">{{ request.user.first_name.0 }}{{ request.user.last_name.0 }}</a>
+                    <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'profile_details' request.user.id %}">
+                                Profile details
+                            </a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+        </div>
+</div>
+
+<div class="list-group">
+    <a href="#drop_address" class="list-group-item list-group-item-action list-group-item-secondary"
+       data-toggle="collapse">
+        <i class="far fa-file-alt fa-lg"></i> Slips
+        <span class="badge badge-info">{{ request.user.slip_set.count }}</span></a>
+    <div id="drop_address" class="collapse">
+        <a href="{% url 'slips' %}" class="list-group-item list-group-item-action" id="dropmenu">
+            Search
+        </a>
+        <a href="{% url 'slip_create' %}" class="list-group-item list-group-item-action" id="dropmenu">
+            Create a slip
+        </a>
+    </div>
+
+    <a href="#drop_group" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="collapse">
+        <i class="fas fa-shopping-basket fa-lg"></i> Items <span class="badge badge-info">{{ request.user.item_set.count }}</span></a>
+
+    <div id="drop_group" class="collapse">
+        <a href="{% url 'items' %}" class="list-group-item list-group-item-action" id="dropmenu">
+            Search
+        </a>
+        <a href="{% url 'item_create' %}" class="list-group-item list-group-item-action" id="dropmenu">
+            Add an item
+        </a>
+    </div>
+
+    <a href="{% url 'upload' %}" class="list-group-item list-group-item-action list-group-item-secondary">
+    <i class="fas fa-plus"></i> Add a scan</a>
+
+</div>
