@@ -53,8 +53,9 @@ class SlipDetailView(LoginRequiredMixin, DetailView):
     queryset = Slip.objects.all()
 
     def get_context_data(self, **kwargs):
-        if self.request.GET.get('action') == 'rescan':
-            parse_text.delay(self.object.raw_text, self.object.pk)
+        get_action = self.request.GET.get('action')
+        if get_action == 'rescan':
+            parse_text.delay(self.object.raw_text, self.object.pk, get_action)
             messages.add_message(self.request, messages.INFO, "Processing text detection...")
         context = super().get_context_data(**kwargs)
         context['path'] = MEDIA_URL

@@ -26,24 +26,30 @@ def detect_text(filename, pk):
     return "Sent to parser"
 
 @shared_task
-def parse_text(slip_text, pk):
+def parse_text(slip_text, pk, get_action=None):
     slip_to_update = Slip.objects.get(pk=pk)
 
-    if slip_text:
-        slip_to_update.raw_text = slip_text
-        slip_to_update.seller_name = get_seller_name(slip_text)
-        slip_to_update.purchase_date = get_receipt_date(slip_text)
-        slip_to_update.total_amount = get_total_amount(slip_text)
-        slip_to_update.payment_type = get_payment_method(slip_text)
-        slip_to_update.save()
+    if get_action != 'rescan':
+        if slip_text:
+            slip_to_update.raw_text = slip_text
+            slip_to_update.seller_name = get_seller_name(slip_text)
+            slip_to_update.purchase_date = get_receipt_date(slip_text)
+            slip_to_update.total_amount = get_total_amount(slip_text)
+            slip_to_update.payment_type = get_payment_method(slip_text)
+            slip_to_update.save()
 
-    else:
-        pass
+        else:
+            pass
     #add msg
 
     items_to_save = get_items(slip_text)
     items_raw_only = get_item_content(slip_text)
+
     if items_to_save:
+        if get_action == 'rescan':
+            items_to_overwrite = Item.objects.filter(slip=slip_to_update)
+            items_to_overwrite.delete()
+
         for item in items_to_save:
             if len(item) == 4:
                 Item.objects.create(

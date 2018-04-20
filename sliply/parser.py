@@ -118,7 +118,7 @@ def get_item_content(receipt):
 
 def get_items(receipt):
     item_content = get_item_content(receipt)
-    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/]|[0-9]{1},[0-9]{1}[A-Z])*([\d,\d]*|[xX])[\s]*[xX]([\s]|([,]*))([\d,.]*))', item_content)
+    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/]|[0-9]{1},[0-9]{1}[A-Z])*([\d,\d]*|[xX\*])[\s]*[xX\*]([\s]|([,]*))([\d,.]*))', item_content)
     items = []
 
     for item in item_match:
