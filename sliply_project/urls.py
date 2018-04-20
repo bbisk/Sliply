@@ -14,15 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from sliply.views import FileUploadView, SlipListView, SlipDetailView, SlipUpdateView, SlipDeleteView, SearchView, \
     UserProfileView, UserUpdateView, ItemListView, ItemDetailView, SlipCreateView, ItemUpdateView, ItemDeleteView, \
     ItemCreateView
+from sliply_project.settings import DEBUG, MEDIA_URL, MEDIA_ROOT
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', FileUploadView.as_view(), name='upload'),
+    url(r'^$', UserProfileView.as_view(), name='main'),
+    url(r'^upload/$', FileUploadView.as_view(), name='upload'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
@@ -41,3 +44,6 @@ urlpatterns = [
     url(r'^profile/(?P<pk>(\d)+)/edit/$', UserUpdateView.as_view(), name='profile_edit'),
 
 ]
+
+if DEBUG is True:
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

@@ -37,6 +37,10 @@
 
                         {% endfor %}
                 </ol></div>
+                    {% if object.scanfile %}
+                        <a href="{{ path|default:"/media/" }}{{ object.scanfile }}"><img src="{{ path|default:"/media/" }}{{ object.scanfile }}"
+                                style="width: 20vw"></a>
+                            {% endif %}
                 {%  endif %}
                     <p><br><a class="btn btn-info" role="button" href="{% url 'slip_details' object.pk %}?action=rescan">Rescan</a></p>
 

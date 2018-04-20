@@ -56,15 +56,35 @@ def get_total_amount(receipt):
                             return normalize_amount(receipt_wordlist[n])
 
 
+
 def get_payment_method(receipt):
-    card_payment = re.search(r'([kK][aA][rR][tT]([aA]|[\w]))', receipt)
-    cash_payment = re.match(r'([gG][oO][tT]([oO]|[\w])[wW][kK]([aA]|[\w]))', receipt)
-    if card_payment:
-        return 1
-    elif cash_payment:
-        return 0
-    else:
-        return 2
+    wordlist = get_receipt_wordlist(receipt)
+    method_result = 2
+    for word in wordlist:
+        card_payment = ['karta']
+        cash_payment = ['gotówka', 'gotowka']
+        card_match = get_close_matches(word.lower(), card_payment, cutoff=0.8)
+        cash_match = get_close_matches(word.lower(), cash_payment, cutoff=0.7)
+
+        if card_match:
+            method_result = 1
+
+        elif cash_match:
+            method_result = 0
+
+    return method_result
+
+# def get_payment_method(receipt):
+#     card_payment = re.search(r'([kK][aA][rR][tT]([aA]|[\w]))', receipt)
+#     cash_payment = re.match(r'([gG][oO][tT]([oO]|[\w])[wW][kK]([aA]|[\w]))', receipt)
+#     if card_payment:
+#         return 1
+#     elif cash_payment:
+#         return 0
+#     else:
+#         return 2
+
+
 
 def get_item_content(receipt):
     wordlist = get_receipt_wordlist(receipt)

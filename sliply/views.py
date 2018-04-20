@@ -10,6 +10,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
+from sliply_project.settings import MEDIA_URL
 from .models import Slip, Item
 from .tasks import parse_text
 from .forms import UploadForm, SlipCreateForm, ItemCreateForm
@@ -56,7 +57,9 @@ class SlipDetailView(LoginRequiredMixin, DetailView):
             parse_text.delay(self.object.raw_text, self.object.pk)
             messages.add_message(self.request, messages.INFO, "Processing text detection...")
         context = super().get_context_data(**kwargs)
+        context['path'] = MEDIA_URL
         return context
+
 
 class SlipUpdateView(LoginRequiredMixin, UpdateView):
     model = Slip
