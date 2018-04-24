@@ -19,3 +19,5 @@ Instalation
 7. Make sure you have Redis server installed and up and running
 8. Run Celery worker and Django runsslserver (or runserver if no Facebook authentication will be used) or use run.sh 
 9. Run tests: ./manage.py test
+
+Slides in Polish: https://docs.google.com/presentation/d/17U9NjcWHSSF8_KBE3UxH-vBhG57a6gTKTdGNwQYw4W0/edit?usp=sharing
