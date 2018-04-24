@@ -1,12 +1,12 @@
 {% extends 'subbase.html' %}
 {% block cardheader %}
-                    <a href="{% url 'slip_edit' object.pk %}"><i class="fas fa-edit fa-lg"></i></a>
-                    <a href="{% url 'slip_delete' object.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
+    <a href="{% url 'slip_edit' object.pk %}"><i class="fas fa-edit fa-lg"></i></a>
+    <a href="{% url 'slip_delete' object.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
 {% endblock %}
 {% block form %}
-            <form action="" method="post">{% csrf_token %}
-             {{ form.as_p }}
-            <input type="submit" value="Update">
-            </form>
+    <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update">
+    </form>
 
 {% endblock %}

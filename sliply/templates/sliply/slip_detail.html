@@ -1,40 +1,43 @@
 {% extends 'subbase.html' %}
 {% block cardheader %}
 
-                    <a href="{% url 'slip_edit' object.pk %}"><i class="fas fa-edit fa-lg"></i></a>
-                    <a href="{% url 'slip_delete' object.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
+    <a href="{% url 'slip_edit' object.pk %}"><i class="fas fa-edit fa-lg"></i></a>
+    <a href="{% url 'slip_delete' object.pk %}"><i class="fas fa-trash-alt fa-lg"></i></a>
 {% endblock %}
 {% block form %}
-                <div class="col">
-                <div class="row">
-                Purchase date: {{ object.purchase_date }}
-                </div>
-                <div class="row">
-                From: {{ object.seller_name }}
-                </div>
-                <div class="row">
-                Total amount: {{ object.total_amount }}
-                </div>
-                <div class="row">
-                Paid by: {{ object.get_payment_type_display }}
-                </div>
-                {% if object.item_set.all %}
-                <div class="row">
+    <div class="col">
+        <div class="row">
+            Purchase date: {{ object.purchase_date }}
+        </div>
+        <div class="row">
+            From: {{ object.seller_name }}
+        </div>
+        <div class="row">
+            Total amount: {{ object.total_amount }}
+        </div>
+        <div class="row">
+            Paid by: {{ object.get_payment_type_display }}
+        </div>
+        {% if object.item_set.all %}
+            <div class="row">
                 <strong>Items:</strong>
 
                 <ol>
-                {% for obj in object.item_set.all %}
-                    <li><a href="{% url 'item_details' obj.pk %}">{{ obj.item_name }}</a></li>
+                    {% for obj in object.item_set.all %}
+                        <li><a href="{% url 'item_details' obj.pk %}">{{ obj.item_name }}</a></li>
 
-                        {% endfor %}
-                </ol></div>
-                {%  endif %}
-                 {% if object.scanfile %}
-                        <a href="{{ path|default:"/media/" }}{{ object.scanfile }}"><img src="{{ path|default:"/media/" }}{{ object.scanfile }}"
-                                style="width: 15vw"></a>
-                            {% endif %}
-                    <p><br><a class="btn btn-info" role="button" href="{% url 'slip_details' object.pk %}?action=rescan">Rescan</a></p>
+                    {% endfor %}
+                </ol>
+            </div>
+        {% endif %}
+        {% if object.scanfile %}
+            <a href="{{ path|default:"/media/" }}{{ object.scanfile }}"><img
+                    src="{{ path|default:"/media/" }}{{ object.scanfile }}"
+                    style="width: 15vw"></a>
+        {% endif %}
+        <p><br><a class="btn btn-info" role="button" href="{% url 'slip_details' object.pk %}?action=rescan">Rescan</a>
+        </p>
 
-                </div>
+    </div>
 
 {% endblock %}

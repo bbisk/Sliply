@@ -49,7 +49,7 @@ class SliplyModelViewTest(TestCase):
         return test_slip
 
     def _file_upload(self, *args):
-        file_path = os.path.join(os.path.join(BASE_DIR, 'sliply/test_image/'), 'par2.jpg')
+        file_path = os.path.join(os.path.join(BASE_DIR, 'sliply/test_image/'), 'test.jpg')
         self.assertTrue(os.path.exists(file_path))
         self._login_user()
         with io.open(file_path, 'rb') as scanfile:
@@ -91,7 +91,7 @@ class SliplyModelViewTest(TestCase):
     def test_if_image_uploaded(self):
         if app.control.inspect().active():
             self._file_upload()
-            self.assertTrue(os.path.exists(os.path.join(MEDIA_ROOT, 'par2.jpg')))
+            self.assertTrue(os.path.exists(os.path.join(MEDIA_ROOT, 'test.jpg')))
         else:
             raise Exception('This test requires Celery worker to be activated')
 
