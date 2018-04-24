@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -7,16 +6,13 @@ from django.db.models.query_utils import Q
 from django.shortcuts import redirect, get_object_or_404
 from django.urls.base import reverse_lazy
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from sliply_project.settings import MEDIA_URL
 from .models import Slip, Item
-from .tasks import parse_text
+from .tasks import parse_text, detect_text
 from .forms import UploadForm, SlipCreateForm, ItemCreateForm
-
-from .tasks import detect_text
-
 
 #Slip views
 
@@ -31,9 +27,8 @@ class FileUploadView(LoginRequiredMixin, CreateView):
             owner = self.request.user
             save_to_db = Slip.objects.create(owner=owner, scanfile=filename)
             detect_text.delay(filename.name, save_to_db.pk)
-
-        # messages.add_message(self.request, messages.INFO, "OK")
         return redirect('slips')
+
 
 class SlipListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
@@ -46,7 +41,6 @@ class SlipListView(LoginRequiredMixin, ListView):
         total_amount = queryset.aggregate(Sum('total_amount'))
         context['total_amount_sum'] = total_amount['total_amount__sum']
         return context
-
 
 
 class SlipDetailView(LoginRequiredMixin, DetailView):
@@ -79,8 +73,10 @@ class SearchView(SlipListView):
         fromdate = self.request.GET.get('from', default="")
         todate = self.request.GET.get('to', default="")
 
-        queryset = Slip.objects.filter(owner=self.request.user).order_by('-create_date').filter(seller_name__icontains=query) or \
-                   Slip.objects.filter(owner=self.request.user).order_by('-create_date').filter(item__item_name__icontains=query)
+        queryset = Slip.objects.filter(owner=self.request.user).order_by('-create_date').\
+                       filter(seller_name__icontains=query) or \
+                   Slip.objects.filter(owner=self.request.user).order_by('-create_date').\
+                       filter(item__item_name__icontains=query)
         if fromto == "from" and fromdate != "" and todate!="":
             queryset = queryset.filter(Q(purchase_date__gte=fromdate)& Q(purchase_date__lte=todate))
 
@@ -92,6 +88,7 @@ class SearchView(SlipListView):
 
         return queryset
 
+
 class SlipCreateView(LoginRequiredMixin, CreateView):
         form_class = SlipCreateForm
         template_name = 'form.html'
@@ -102,7 +99,6 @@ class SlipCreateView(LoginRequiredMixin, CreateView):
             form_to_save.save()
             return redirect('slips')
 
-
 #Item views
 
 class ItemListView(LoginRequiredMixin, ListView):
@@ -112,8 +108,11 @@ class ItemListView(LoginRequiredMixin, ListView):
         fromdate = self.request.GET.get('from', default="")
         todate = self.request.GET.get('to', default="")
 
-        queryset = Item.objects.filter(owner=self.request.user).order_by('-create_date').filter(slip__seller_name__icontains=query) or \
-                   Item.objects.filter(owner=self.request.user).order_by('-create_date').filter(item__icontains=query)
+        queryset = Item.objects.filter(owner=self.request.user).order_by('-create_date').\
+                       filter(slip__seller_name__icontains=query) or \
+                   Item.objects.filter(owner=self.request.user).order_by('-create_date').\
+                       filter(item__icontains=query)
+
         if fromto == "from" and fromdate != "" and todate!="":
             queryset = queryset.filter(Q(slip__purchase_date__gte=fromdate)& Q(slip__purchase_date__lte=todate))
 
@@ -131,6 +130,7 @@ class ItemListView(LoginRequiredMixin, ListView):
         total_amount = queryset.aggregate(Sum('price'))
         context['total_amount_sum'] = total_amount['price__sum']
         return context
+
 
 class ItemDetailView(LoginRequiredMixin, DetailView):
     model = Item
@@ -165,6 +165,8 @@ class UserProfileView(LoginRequiredMixin, DetailView):
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
+
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     fields = ('username', 'first_name', 'last_name', 'email')
+

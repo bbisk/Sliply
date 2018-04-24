@@ -3,10 +3,13 @@ from datetime import datetime as dt
 from difflib import get_close_matches
 
 
+ITEM_REGEX = r'((^|[\n])([\w]|[\s]|[.-]|[\/]|[0-9]{1},[0-9]{1}[A-Z])*([\d,\d]*|[xX\*])[\s]*[xX\*]([\s]|([,]*))([\d,.]*))'
+
+
 def get_receipt_wordlist(receipt):
     return receipt.replace('\n', ' ').split(" ")
 
-#store name
+
 def get_seller_name(receipt):
     receipt_space = receipt.split("\n")
     if receipt_space[0] == '':
@@ -14,7 +17,7 @@ def get_seller_name(receipt):
     else:
         return receipt_space[0]
 
-#date
+
 def get_receipt_date(receipt):
     date_regex = re.search(r'\d{4}\-(0?[1-9]|1[012])\-(0?[0-9]|[12][0-9]|3[01])*', receipt)
     date_regex_string = re.search(r'dn.[0-3][0-9]r[0-1][1-9].[0-9]{2}', receipt)
@@ -29,8 +32,10 @@ def get_receipt_date(receipt):
 def total_amount_check(total):
     return re.match(r'^[0-9]{1,4}(,)[0-9]{2,}', total)
 
+
 def normalize_amount(amount):
-    return float(amount.replace(',','.'))
+    return float(amount.replace(',', '.'))
+
 
 def get_total_amount(receipt):
     receipt_wordlist = get_receipt_wordlist(receipt)
@@ -44,7 +49,7 @@ def get_total_amount(receipt):
             if total_amount_check(possible_total_amount):
                 return normalize_amount(possible_total_amount)
             else:
-                return "error"
+                return None
         else:
             possible_total_amount = receipt_wordlist[index + 2]
             if word_normalized in receipt_total_word_placers and receipt_wordlist[index + 1].lower() != "ptu":
@@ -54,7 +59,6 @@ def get_total_amount(receipt):
                     for n in range(index + 1, index + 6):
                         if total_amount_check(receipt_wordlist[n]):
                             return normalize_amount(receipt_wordlist[n])
-
 
 
 def get_payment_method(receipt):
@@ -73,17 +77,6 @@ def get_payment_method(receipt):
             method_result = 0
 
     return method_result
-
-# def get_payment_method(receipt):
-#     card_payment = re.search(r'([kK][aA][rR][tT]([aA]|[\w]))', receipt)
-#     cash_payment = re.match(r'([gG][oO][tT]([oO]|[\w])[wW][kK]([aA]|[\w]))', receipt)
-#     if card_payment:
-#         return 1
-#     elif cash_payment:
-#         return 0
-#     else:
-#         return 2
-
 
 
 def get_item_content(receipt):
@@ -118,7 +111,7 @@ def get_item_content(receipt):
 
 def get_items(receipt):
     item_content = get_item_content(receipt)
-    item_match = re.findall(r'((^|[\n])([\w]|[\s]|[.-]|[\/]|[0-9]{1},[0-9]{1}[A-Z])*([\d,\d]*|[xX\*])[\s]*[xX\*]([\s]|([,]*))([\d,.]*))', item_content)
+    item_match = re.findall(ITEM_REGEX, item_content)
     items = []
 
     for item in item_match:

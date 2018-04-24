@@ -1,0 +1,43 @@
+.Sidebar {
+    height: 100vh;
+    display: block;
+    color: white;
+    background: #9ad3de;
+
+}
+
+.list-group-item {
+    background: #9ad3de;
+    color: white;
+}
+
+#dropmenu {
+    height: 2rem;
+    padding: 5px 20px;
+    font-size: small;
+}
+
+#circle {
+    width: 6vw;
+    height: 6vw;
+    -moz-border-radius: 4vw;
+    -webkit-border-radius: 4vw;
+    border-radius: 4vw;
+    font-size: 4vw;
+    text-align: center;
+}
+
+#searchinput {
+    width: 30vw;
+}
+#fromtoinput {
+    width: 10vw;
+}
+
+#dateinput {
+    width: 15vw;
+}
+Main {
+    height: 100vh;
+}
+

@@ -1,11 +1,13 @@
 from django import forms
 
-from sliply.models import Item
-from .models import Slip
+from .validators import validate_image_extension
+from .models import Item, Slip
 
 
 class UploadForm(forms.ModelForm):
-    scanfile = forms.FileField(label='Add files to scan', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    scanfile = forms.FileField(label='Add files to scan',
+                               validators=[validate_image_extension, ],
+                               widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = Slip

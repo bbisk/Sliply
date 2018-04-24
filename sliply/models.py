@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls.base import reverse
 
+
 PAYMENT_TYPES = (
     (0, 'Cash'),
     (1, 'Card'),
@@ -18,8 +19,6 @@ class Slip(models.Model):
     purchase_date = models.DateField(null=True, blank=True)
     total_amount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     payment_type = models.SmallIntegerField(choices=PAYMENT_TYPES, null=True)
-    # address = models.ForeignKey('Address', null=True, blank=True)
-    # group = models.ManyToManyField('Group', blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -37,8 +36,6 @@ class Item(models.Model):
     item_name = models.CharField(max_length=128, null=True, blank=True)
     quantity = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-
-    # category
 
     def __str__(self):
         return self.item_name
