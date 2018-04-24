@@ -6,6 +6,9 @@ TODO:
 2. Deploy MVP on Digital Ocean
 3. Add more functionalities
 
+![alt text](https://raw.githubusercontent.com/tallpol3/Sliply/master/media/screenshot.png)
+
+
 Instalation
 1. Download or clone repository
 2. Create a virtual enviroment for the app (Open terminal in the project folder and us a comand: virtualenv venv)
