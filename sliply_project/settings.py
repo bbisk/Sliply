@@ -32,7 +32,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = env('SOCIAL_AUTH_FACEBOOK_SECRET')
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'login'
-LOGIN_REDIRECT_URL = 'profile_details'
+LOGIN_REDIRECT_URL = 'main'
 
 
 INSTALLED_APPS = [
@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'social_django',
     'sslserver',
     'sliply',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'sliply_api',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +127,11 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}

@@ -11,5 +11,13 @@
         You already have:
         <br>{{ request.user.slip_set.count }} slips added,
         <br>{{ request.user.item_set.count }} items overall.
+
+    </div>
+    <div class="column">
+        <br>
+        <div class="alert alert-info">
+            <a href="{% url 'slip_api' %}"><strong>Your API token</strong>: {{ token.0 }}</a>
+        </div>
+        <small>Use following HTTP header - Authorization: Token {{ token.0 }}</small>
     </div>
 {% endblock %}

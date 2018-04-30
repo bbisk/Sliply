@@ -5,13 +5,14 @@ from django.contrib.auth import views as auth_views
 from sliply.views import FileUploadView, SlipListView, SlipDetailView, SlipUpdateView, SlipDeleteView, SearchView, \
     UserProfileView, UserUpdateView, ItemListView, ItemDetailView, SlipCreateView, ItemUpdateView, ItemDeleteView, \
     ItemCreateView
+from sliply_api.views import SlipListViewAPI
 from sliply_project.settings import DEBUG, MEDIA_URL, MEDIA_ROOT
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', UserProfileView.as_view(), name='main'),
     url(r'^upload/$', FileUploadView.as_view(), name='upload'),
-    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^login/$', auth_views.login, {'redirect_field_name': 'next'}, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
     url(r'^slips/$', SlipListView.as_view(), name='slips'),
@@ -27,7 +28,7 @@ urlpatterns = [
     url(r'^items/create/$', ItemCreateView.as_view(), name='item_create'),
     url(r'^profile/$', UserProfileView.as_view(), name='profile_details'),
     url(r'^profile/(?P<pk>(\d)+)/edit/$', UserUpdateView.as_view(), name='profile_edit'),
-
+    url(r'^api/$', SlipListViewAPI.as_view(), name='slip_api'),
 ]
 
 if DEBUG is True:

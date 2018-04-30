@@ -8,6 +8,7 @@ from django.urls.base import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from rest_framework.authtoken.models import Token
 
 from sliply_project.settings import MEDIA_URL
 from .models import Slip, Item
@@ -165,6 +166,11 @@ class UserProfileView(LoginRequiredMixin, DetailView):
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_token = Token.objects.get_or_create(user=self.request.user)
+        context['token'] = user_token
+        return context
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
