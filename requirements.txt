@@ -7,7 +7,9 @@ chardet==3.0.4
 defusedxml==0.5.0
 Django==1.11.12
 django-environ==0.4.4
+django-registration-redux==2.4
 django-sslserver==0.20
+djangorestframework==3.8.2
 enum34==1.1.6
 google-api-core==1.1.0
 google-auth==1.4.1

@@ -1,3 +1,4 @@
+import registration
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -15,6 +16,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'redirect_field_name': 'next'}, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^slips/$', SlipListView.as_view(), name='slips'),
     url(r'^slips/create/$', SlipCreateView.as_view(), name='slip_create'),
     url(r'^slips/(?P<pk>(\d)+)/$', SlipDetailView.as_view(), name='slip_details'),

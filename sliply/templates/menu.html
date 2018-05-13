@@ -1,7 +1,12 @@
 <div class="d-flex p-3 justify-content-center ">
     <div id="circle" class="bg-secondary">
         <a href="#" data-toggle="dropdown" style="color: white; text-decoration: none; letter-spacing: -0.3vw;">
-            {{ request.user.first_name.0 }}{{ request.user.last_name.0 }}</a>
+        {% if request.user.first_name  %}
+            {{ request.user.first_name.0 }}{{ request.user.last_name.0 }}
+        {% else %}
+            {{ request.user.username.0 }}
+        {% endif %}
+        </a>
         <div class="dropdown-menu">
             <a class="dropdown-item" href="{% url 'profile_details' %}">
                 Profile details

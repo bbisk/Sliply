@@ -8,6 +8,7 @@ from django.urls.base import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from registration.views import RegistrationView
 from rest_framework.authtoken.models import Token
 
 from sliply_project.settings import MEDIA_URL
@@ -175,4 +176,5 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     fields = ('username', 'first_name', 'last_name', 'email')
+    success_url = reverse_lazy('profile_details')
 
