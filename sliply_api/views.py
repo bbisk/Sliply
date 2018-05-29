@@ -1,11 +1,11 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import generics
 
 from sliply.models import Slip
 from .serializers import SlipSerializer
 
 
-class SlipListViewAPI(LoginRequiredMixin, generics.ListCreateAPIView):
+class SlipListViewAPI(generics.ListCreateAPIView):
     serializer_class = SlipSerializer
 
     def get_queryset(self):

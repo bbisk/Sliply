@@ -3,6 +3,8 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+
 from sliply.views import FileUploadView, SlipListView, SlipDetailView, SlipUpdateView, SlipDeleteView, SearchView, \
     UserProfileView, UserUpdateView, ItemListView, ItemDetailView, SlipCreateView, ItemUpdateView, ItemDeleteView, \
     ItemCreateView
@@ -15,6 +17,7 @@ urlpatterns = [
     url(r'^upload/$', FileUploadView.as_view(), name='upload'),
     url(r'^login/$', auth_views.login, {'redirect_field_name': 'next'}, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
+    url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^slips/$', SlipListView.as_view(), name='slips'),
@@ -31,6 +34,8 @@ urlpatterns = [
     url(r'^profile/$', UserProfileView.as_view(), name='profile_details'),
     url(r'^profile/(?P<pk>(\d)+)/edit/$', UserUpdateView.as_view(), name='profile_edit'),
     url(r'^api/$', SlipListViewAPI.as_view(), name='slip_api'),
+    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^api-token-refresh/', refresh_jwt_token),
 ]
 
 if DEBUG is True:
