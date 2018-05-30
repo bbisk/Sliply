@@ -3,7 +3,7 @@ Scan receipts and control your expenses. Django, PostgreSQL, Celery, Redis, Goog
 
 TODO:
 
-~~1. REST API~~ :heavy_check_mark 
+~~1. REST API~~ :heavy_check_mark:
 
 ~~2. Deploy MVP on Digital Ocean~~ :heavy_check_mark: http://thrifter.pl/
 
