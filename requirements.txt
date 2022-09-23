@@ -24,7 +24,7 @@ idna==2.6
 kombu==4.1.0
 oauthlib==2.0.7
 opencv-python==3.4.0.12
-protobuf==3.5.2.post1
+protobuf==3.18.3
 psycopg2==2.7.4
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
